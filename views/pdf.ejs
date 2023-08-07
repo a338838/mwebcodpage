@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    </style>
+        
+
+    <title>Generar PDF</title>
+    <!-- Carga de librerías -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <h1>Generar PDF</h1>
+
+    <!-- Lista desplegable de usuarios -->
+    <div>
+      <label for="userSelect">Filtrar por Usuario:</label>
+      <select id="userSelect" onchange="filterByUser()">
+        <option value="">Seleccione un usuario</option>
+        <% usuarios.forEach(function(usuario) { %>
+          <option value="<%= usuario.username %>"><%= usuario.username %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <!-- Lista desplegable de fechas -->
+    <div>
+      <label for="dateSelect">Filtrar por Fecha:</label>
+      <select id="dateSelect" onchange="filterByDate()">
+        <option value="">Seleccione una fecha</option>
+        <% fechas.forEach(function(fecha) { %>
+          <option value="<%= fecha.logindate %>"><%= new Date(fecha.logindate).toISOString().replace('Z', '') %></option>
+        <% }); %>
+      </select>
+    </div>
+
+    <!-- Tabla filtrada -->
+    <table>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Fecha de inicio de sesión</th>
+          <th>Fecha de cierre de sesión</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% registros.forEach(function(registro) { %>
+          <tr>
+            <td><%= registro.username %></td>
+            <td><%= new Date(registro.logindate).toISOString().replace('Z', '') %></td>
+            <td><%= new Date(registro.logoutdate).toISOString().replace('Z', '') %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+      <!--GENERAR PDF-->
+      <div> </div>
+      <a href="/generate-pdf" target="_blank">Descargar como PDF</a>
+
+      <div>   </div>
+      <a href="/"><---Volver</a>
+
+    <script>
+      // Función para filtrar por usuario
+      function filterByUser() {
+        const userSelect = document.getElementById("userSelect");
+        const selectedUser = userSelect.value;
+        if (selectedUser) {
+          window.location.href = `/pdf?user=${selectedUser}`;
+        }
+      }
+
+      // Función para filtrar por fecha
+      function filterByDate() {
+        const dateSelect = document.getElementById("dateSelect");
+        const selectedDate = dateSelect.value;
+        if (selectedDate) {
+          window.location.href = `/pdf?date=${selectedDate}`;
+        }
+      }
+    </script>
+  </body>
+</html>
+
+
